@@ -77,11 +77,40 @@ and cd.date = cv.date
 
 
 -- Total Populations Vs Vaccinations
-
-select cd.continent, cd.location, cd.date, cd.population, cv.new_vaccinations
+select cd.continent, cd.location, cd.date, cd.population, cv.new_vaccinations, 
+SUM(CONVERT (int,cv.new_vaccinations)) OVER (PARTITION BY cd.location ORDER BY cd.location, cd.date) as RollingPeopleVaccinated
 from CovidDeaths cd
 join CovidVaccinations cv
 on cd.location = cv.location
 and cd.date = cv.date
 where cd.continent is not null
-order by 1,2,3
+order by 2,3
+
+
+-- by using CTE
+
+With PopulationVsVaccinated (continent, location, population, new_vaccinations, RollingPeopleVaccinated)
+as
+(
+select cd.continent, cd.location, cd.population, cv.new_vaccinations, 
+SUM(CONVERT (int,cv.new_vaccinations)) OVER (PARTITION BY cd.location ORDER BY cd.location, cd.date) as RollingPeopleVaccinated
+from CovidDeaths cd
+join CovidVaccinations cv
+on cd.location = cv.location
+and cd.date = cv.date
+where cd.continent is not null
+)
+select *, (RollingPeopleVaccinated/population)*100 as RollingPeopleVaccinatedPercentage  from PopulationVsVaccinated
+
+
+
+-- Create view for data visualization
+
+CREATE VIEW PercentagePopulationVaccinated as
+select cd.continent, cd.location, cd.population, cv.new_vaccinations, 
+SUM(CONVERT (int,cv.new_vaccinations)) OVER (PARTITION BY cd.location ORDER BY cd.location, cd.date) as RollingPeopleVaccinated
+from CovidDeaths cd
+join CovidVaccinations cv
+on cd.location = cv.location
+and cd.date = cv.date
+where cd.continent is not null
