@@ -22,3 +22,66 @@ select location, population, Max(total_cases) as highestCovidRate, Max((total_ca
 from CovidDeaths 
 group by location, population
 order by CasesPercentage desc
+
+
+-- Countries with highest Death Rate to population
+
+select location, MAX(cast(total_deaths as int)) AS TotalDeaths
+from CovidDeaths 
+where continent is not null
+group by location
+order by TotalDeaths desc
+
+
+
+-- Continent with highest Death Rate to population
+
+select location, MAX(cast(total_deaths as int)) AS TotalDeaths
+from CovidDeaths 
+where continent is  null
+group by location
+order by TotalDeaths desc
+
+-- Global Numbers
+
+select date, SUM(new_cases) as TotalNewCases
+from CovidDeaths 
+where continent is not null
+group by date
+order by TotalNewCases desc
+
+
+select date, SUM(new_cases) as TotalNewCases, SUM(cast(new_deaths as int)) AS TotalNewDeaths, SUM(cast(new_deaths as int))/SUM(new_cases)*100 as DeathPercentage
+from CovidDeaths 
+where continent is not null
+group by date
+order by 1, 2
+
+-- without date let's see the total numbers
+
+select SUM(new_cases) as TotalNewCases, SUM(cast(new_deaths as int)) AS TotalNewDeaths, SUM(cast(new_deaths as int))/SUM(new_cases)*100 as DeathPercentage
+from CovidDeaths 
+where continent is not null
+--group by date
+order by 1, 2
+
+
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+-- Joining both tables
+
+select * from CovidDeaths cd
+join CovidVaccinations cv
+on cd.location = cv.location
+and cd.date = cv.date
+
+
+-- Total Populations Vs Vaccinations
+
+select cd.continent, cd.location, cd.date, cd.population, cv.new_vaccinations
+from CovidDeaths cd
+join CovidVaccinations cv
+on cd.location = cv.location
+and cd.date = cv.date
+where cd.continent is not null
+order by 1,2,3
