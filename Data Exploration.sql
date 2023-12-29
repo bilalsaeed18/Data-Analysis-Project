@@ -73,8 +73,12 @@ where continent is not null
 order by 1, 2
 
 
-select location, population, MAX(total_cases) AS HighestInfectionCount, Max((total_cases/population))*100 as PercentagePopulationInfected
-from CovidDeaths
+select location, population, date, MAX(total_cases) AS HighestInfectionCount, Max((total_cases/population))*100 as PercentagePopulationInfected
+from CovidDeaths 
+where continent is not null
+group by location, population, date
+order by PercentagePopulationInfected desc
+
 
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------
 
