@@ -14,5 +14,7 @@ SQL Server 2022 Express is a free edition of SQL Server, ideal for development a
 
 Once downloading done now you cn start working on the project
 
+Download Tableau Public
+https://public-pantheon.tableau.com/en-us/s/download
 
 
