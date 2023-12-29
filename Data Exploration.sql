@@ -42,6 +42,13 @@ where continent is  null
 group by location
 order by TotalDeaths desc
 
+select location, MAX(cast(total_deaths as int)) AS TotalDeaths
+from CovidDeaths 
+where continent is  null
+and location not in ('World','European Union','International')
+group by location
+order by TotalDeaths desc
+
 -- Global Numbers
 
 select date, SUM(new_cases) as TotalNewCases
@@ -65,6 +72,9 @@ where continent is not null
 --group by date
 order by 1, 2
 
+
+select location, population, MAX(total_cases) AS HighestInfectionCount, Max((total_cases/population))*100 as PercentagePopulationInfected
+from CovidDeaths
 
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------
 
