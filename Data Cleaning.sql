@@ -102,5 +102,73 @@ Update NashvilleHousing
 set OwnerSpilitState = PARSENAME(REPLACE(OwnerAddress,',','.'),1)
 
 
+------ convert Y and N to yes and No
 
-select * from NashvilleHousing
+select distinct(soldasvacant), count(soldasvacant) 
+from NashvilleHousing
+group by soldasvacant
+order by 2
+
+
+select soldasvacant,
+CASE when soldasvacant = 'Y' Then 'Yes' 
+	 when soldasvacant = 'N' Then 'No'
+	 else soldasvacant
+END
+from NashvilleHousing
+order by 2
+
+--- UPDATING TABLE
+
+UPDATE NashvilleHousing
+SET soldasvacant = CASE when soldasvacant = 'Y' Then 'Yes' 
+	 when soldasvacant = 'N' Then 'No'
+	 else soldasvacant
+END
+
+
+-- REMOVE Duplicates
+WITH Row_dupCTE AS (
+select *,
+	ROW_NUMBER() OVER (
+	PARTITION BY ParcelID,
+				 PropertyAddress,
+				 SalePrice,
+				 SaleDate,
+				 LegalReference
+				 ORDER  BY UniqueID) row_dup
+from NashvilleHousing
+--order by ParcelID 
+)
+SELECT * FROM Row_dupCTE
+WHERE row_dup > 1
+
+-- DELETING DUPLICATES
+
+WITH Row_dupCTE AS (
+select *,
+	ROW_NUMBER() OVER (
+	PARTITION BY ParcelID,
+				 PropertyAddress,
+				 SalePrice,
+				 SaleDate,
+				 LegalReference
+				 ORDER  BY UniqueID) row_dup
+from NashvilleHousing
+--order by ParcelID 
+)
+DELETE FROM Row_dupCTE
+WHERE row_dup > 1
+
+
+
+---DELETE UNUSED DATA
+SELECT * FROM NashvilleHousing
+
+ALTER TABLE NashvilleHousing
+DROP COLUMN OwnerAddress, PropertyAddress, TaxDistrict
+
+
+
+ALTER TABLE NashvilleHousing
+DROP COLUMN SaleDate
