@@ -17,7 +17,7 @@ Once downloading done now you cn start working on the project
 Download Tableau Public
 https://public-pantheon.tableau.com/en-us/s/download
 
-# Intall Python
+# Install Python
 
 Step 1: Download Anaconda
 
